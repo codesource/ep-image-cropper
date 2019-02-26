@@ -1,0 +1,201 @@
+@import "mq";
+@import "reset";
+
+html {
+  height: 100%;
+  width: 100%;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    height: 100%;
+    width: 100%;
+
+    .actions {
+      cursor: pointer;
+      font-size: 1.5em;
+      left: 0;
+      padding: 0 30px;
+      position: absolute;
+      text-align: left;
+      top: 0;
+      vertical-align: top;
+      white-space: nowrap;
+      width: 100%;
+      z-index: 1;
+
+      #download {
+        display: none;
+
+        button {
+          background: transparent;
+          border: none;
+        }
+      }
+
+      #refresh {
+        display: none;
+      }
+
+      .icon {
+        display: inline-block;
+        height: 18px;
+        padding: 0 5px;
+      }
+
+      input {
+        display: inline-block;
+      }
+    }
+
+    .icon {
+      display: inline-block;
+      width: auto;
+    }
+
+    #page {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      height: 100%;
+      padding: 30px;
+      position: relative;
+      text-align: center;
+      width: 100%;
+
+      > .content {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        flex-direction: column;
+
+        .image {
+          border: 5px solid #000000;
+          align-content: stretch;
+          align-items: stretch;
+          display: -webkit-box;
+          display: -moz-box;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: flex;
+          overflow: hidden;
+          position: relative;
+          width: 300px;
+
+          .button {
+            align-items: center;
+            color: #ffffff;
+            cursor: pointer;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            font-size: 3em;
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+          }
+
+          label {
+            display: block;
+            position: relative;
+            width: 100%;
+
+            .icon {
+              height: 48px;
+              width: auto;
+            }
+
+            canvas {
+              height: auto;
+              width: 100%;
+            }
+
+            input[type="file"] {
+              display: none;
+            }
+          }
+
+          .target {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffffff;
+            display: none;
+            left: 0;
+            height: calc(100%);
+            padding: 10px;
+            position: absolute;
+            text-align: center;
+            top: 0;
+            width: 100%;
+            z-index: 2;
+          }
+
+          &.top {
+            background: #3399ff;
+            min-height: 350px;
+          }
+
+          &.bottom {
+            background: #C09853;
+            min-height: 100px;
+          }
+
+          &.selected {
+            min-height: auto;
+
+            .button {
+              display: none;
+            }
+          }
+
+          &:nth-last-of-type(1) {
+            border-top: none;
+          }
+        }
+      }
+    }
+
+    #cropper {
+      background: #ffffff;
+      display: none;
+      height: 100%;
+      left: 0;
+      padding: 30px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10000;
+
+      .image {
+        height: 100%;
+        position: relative;
+        width: 100%;
+
+        .cropper-container {
+          max-height: 100%;
+          max-width: 100%;
+        }
+
+        img {
+          height: auto;
+          max-height: 100%;
+          max-width: 100%;
+          width: auto;
+        }
+      }
+
+      &.open {
+        display: block;
+      }
+    }
+  }
+}
+

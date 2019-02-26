@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <title>Empire &amp; Puzzles - Report builder for Titans &amp; Wars</title>
+        <link rel="stylesheet" href="assets/css/cropper.min.css"/>
+        <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+        <link rel="stylesheet" href="assets/css/styles.css"/>
+    </head>
+    <body>
+        <div id="page">
+            <div class="actions">
+                <input type="text" id="date" />
+                <form action="download.php" method="post" id="download">
+                    <input type="hidden" name="report" value="" id="report-value"/>
+                    <input type="hidden" name="date" value="" id="date-value"/>
+                    <button type="submit">
+                        <img src="assets/img/download-2-xxl.png" class="icon" alt="download" />
+                    </button>
+                </form>
+                <img src="assets/img/refresh-2-xxl.png" class="icon" id="refresh" alt="refresh" />
+            </div>
+            <div class="content">
+                <div class="image top">
+                    <label data-aspect="1.2877493757675522"
+                           data-left="0.04444444399999999"
+                           data-top="0.17156862699999997"
+                           data-width="0.911111111"
+                    >
+                        <div class="button">
+                            <img src="assets/img/add-xxl.png" class="icon" alt="add" />
+                        </div>
+                        <input type="file"/>
+                    </label>
+                    <div class="target">
+                        <div class="button">
+                            <img src="assets/img/add-xxl.png" class="icon" alt="add" />
+                        </div>
+                    </div>
+                </div>
+                <div class="image bottom">
+                    <label data-aspect="0.6192427220671582"
+                           data-left="0.03752533803371259"
+                           data-top="0.43375474050316054"
+                           data-width="0.93031216030538"
+                    >
+                        <div class="button">
+                            <img src="assets/img/add-xxl.png" class="icon" alt="add" />
+                        </div>
+                        <input type="file"/>
+                    </label>
+                    <div class="target">
+                        <div class="button">
+                            <img src="assets/img/add-xxl.png" class="icon" alt="add" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cropper">
+            <div class="actions">
+                <img src="assets/img/checkmark-xxl.png" class="icon" id="import" alt="import" />
+                <img src="assets/img/close-window-xxl.png" class="icon" id="cancel" alt="cancel" />
+            </div>
+            <div class="image">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII="
+                     alt=""
+                     class="croppable"
+                />
+            </div>
+        </div>
+        <script
+                src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+        <script src="assets/js/cropper.min.js"></script>
+        <script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+        <script src="assets/js/moment.min.js"></script>
+        <script src="assets/js/app.js"></script>
+    </body>
+</html>
