@@ -1,0 +1,374 @@
+@mixin clearfix {
+  &:after {
+    clear: both;
+    content: '';
+    display: table;
+  }
+}
+
+@mixin vertical-align($align: middle) {
+  &:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: $align;
+    // you can add font-size 0 here and restore in the children to prevent
+    // the inline-block white-space to mess the width of your elements
+    font-size: 0;
+  }
+  & > * {
+    vertical-align: $align;
+    // although you need to know the font-size, because "inherit" is 0
+    font-size: 1em;
+  }
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  border-radius: $radius;
+  background-clip: padding-box; /* stops bg color from leaking outside the border: */
+}
+
+// Single side border-radius
+
+@mixin border-top-radius($radius) {
+  -webkit-border-top-right-radius: $radius;
+  border-top-right-radius: $radius;
+  -webkit-border-top-left-radius: $radius;
+  border-top-left-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-right-radius($radius) {
+  -webkit-border-bottom-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+  -webkit-border-top-right-radius: $radius;
+  border-top-right-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-bottom-radius($radius) {
+  -webkit-border-bottom-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+  -webkit-border-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-left-radius($radius) {
+  -webkit-border-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+  -webkit-border-top-left-radius: $radius;
+  border-top-left-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-bottom-left-radius($radius) {
+  -webkit-border-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-bottom-right-radius($radius) {
+  -webkit-border-bottom-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-top-left-radius($radius) {
+  -webkit-border-top-left-radius: $radius;
+  border-top-left-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin border-top-right-radius($radius) {
+  -webkit-border-top-right-radius: $radius;
+  border-top-right-radius: $radius;
+  background-clip: padding-box;
+}
+
+@mixin dialog-box($color:#ffffff, $background-color:#ffffff, $size:2px) {
+  $size2: $size + 6px;
+  @include border-radius(3px);
+  border: $color solid $size;
+  position: relative;
+
+  &:after {
+    border-style: solid;
+    border-width: 6px 6px 0;
+    border-color: $background-color transparent;
+    bottom: -6px;
+    content: '';
+    display: block;
+    left: 50%;
+    margin-left: -6px;
+    position: absolute;
+    width: 0;
+    z-index: 1;
+  }
+  &:before {
+    border-style: solid;
+    border-width: $size2 $size2 0;
+    border-color: $color transparent;
+    bottom: ($size2 * -1) - 1;
+    content: '';
+    display: block;
+    left: 50%;
+    margin-left: $size2 * -1;
+    position: absolute;
+    width: 0;
+    z-index: 0;
+  }
+}
+
+@mixin css-arrow($box-edge         : bottom,
+                 $edge-side        : center,
+                 $arrow-size       : 10px,
+                 $edge-side-offset : 0,
+                 $fill-color       : black,
+                 $border-color     : none,
+                 $border-style     : border) {
+
+  // initiate internal variables
+  $box-edge-inverse: bottom;
+  $edge-side-pos: $edge-side;
+  $edge-side-pos-value: 0;
+
+  // establish inverse variables
+  @if $box-edge == top {
+    $box-edge-inverse: bottom;
+  } @else if $box-edge == right {
+    $box-edge-inverse: left;
+  } @else if $box-edge == bottom {
+    $box-edge-inverse: top;
+  } @else if $box-edge == left {
+    $box-edge-inverse: right;
+  }
+
+  // calculate remaining internal variables
+  @if ($box-edge == 'top' or
+       $box-edge == 'bottom') {
+    @if $edge-side == center {
+      $edge-side-pos: left;
+      $edge-side-pos-value: 50%;
+      $edge-side-offset: (-$arrow-size);
+    }
+  }
+  @if ($box-edge == 'left' or
+       $box-edge == 'right') {
+    @if $edge-side == center {
+      $edge-side-pos: top;
+      $edge-side-pos-value: 50%;
+      $edge-side-offset: (-$arrow-size);
+    }
+  }
+
+  &:after, &:before {
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: solid rgba(#fff, 0);
+  }
+
+  &:after {
+    border-color: rgba(#fff, 0);
+    border-width: $arrow-size - 1;
+    #{$box-edge}: (-$arrow-size) - $arrow-size + 2;
+    border-#{$box-edge-inverse}-color: $fill-color;
+    #{$edge-side-pos}: $edge-side-pos-value;
+    margin-#{$edge-side-pos}: $edge-side-offset + 1;
+  }
+
+  @if $border-style == flag {
+    @include border-radius(2px);
+    &:before {
+      border-color: rgba(#fff, 0);
+      border-width: $arrow-size - 1;
+      #{$box-edge}: (-$arrow-size) - $arrow-size + 2;
+      border-#{$box-edge-inverse}-color: $border-color;
+      #{$edge-side-pos}: $edge-side-pos-value;
+      margin-#{$edge-side-pos}: $edge-side-offset + 2;
+    }
+  } @else {
+    &:before {
+      border-color: rgba(#fff, 0);
+      border-width: $arrow-size;
+      #{$box-edge}: (-$arrow-size) - $arrow-size;
+      border-#{$box-edge-inverse}-color: $border-color;
+      #{$edge-side-pos}: $edge-side-pos-value;
+      margin-#{$edge-side-pos}: $edge-side-offset;
+    }
+  }
+}
+
+@mixin dialog-box-left($color:#ffffff, $background-color:#ffffff, $size:2px, $height:6px, $offset:0px) {
+  $size2: $size + $height;
+  @include border-radius(3px);
+  border: $color solid $size;
+  position: relative;
+
+  &:after {
+    border: $height solid;
+    border-color: $background-color $background-color transparent transparent;
+    bottom: $height * -2;
+    content: ' ';
+    height: 0;
+    right: $offset;
+    position: absolute;
+    width: 0;
+  }
+
+  &:before {
+    border: $size2 solid;
+    border-color: $color $color transparent transparent;
+    bottom: ($size2 * -2) - 1;
+    height: 0;
+    content: ' ';
+    right: $size * -1 + $offset;
+    position: absolute;
+    width: 0;
+  }
+}
+
+@mixin dialog-box-right($color:#ffffff, $background-color:#ffffff, $size:2px, $height:6px, $offset:0px) {
+  $size2: $size + $height;
+  @include border-radius(3px);
+  border: $color solid $size;
+  position: relative;
+
+  &:after {
+    border: $height solid;
+    border-color: $background-color transparent transparent $background-color;
+    bottom: $height * -2;
+    content: ' ';
+    height: 0;
+    left: $offset;
+    position: absolute;
+    width: 0;
+  }
+
+  &:before {
+    border: $size2 solid;
+    border-color: $color transparent transparent $color;
+    bottom: ($size2 * -2) - 1;
+    height: 0;
+    content: ' ';
+    left: $size * -1 + $offset;
+    position: absolute;
+    width: 0;
+  }
+}
+
+@mixin placeholder {
+  &::-webkit-input-placeholder {
+    @content
+  }
+  &:-moz-placeholder {
+    @content
+  }
+  &::-moz-placeholder {
+    @content
+  }
+  &:-ms-input-placeholder {
+    @content
+  }
+}
+
+@mixin multipleTextShadow($count, $color) {
+  $textShadow: "0px 0px 0px #{$color}";
+  @for $i from 1 through $count {
+    $a: $i + $i * 0.4;
+    $textShadow: $textShadow + ", #{$i}px #{$a}px 0px #{$color}";
+  }
+  text-shadow: #{$textShadow};
+}
+
+@mixin imageShadowed {
+  position: relative;
+  &:after {
+    background: #000000;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0.1;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+@mixin relativeFontSize($from, $until, $target: 10, $start: 1em) {
+  //@for $i from $from through $until {
+  //  @include mq($from: $i, $until: $i) {
+  //    @if $target < 0 {
+  //      font-size: $start + (1 / $target / 100 * ($until - $i));
+  //    } @else {
+  //      font-size: $start + (-1 / $target / 100 * ($from - $i));
+  //    }
+  //  }
+  //}
+}
+
+@mixin transition($prop: all, $time: 0.5s, $style: ease-in) {
+  -webkit-transition: $prop $time $style;
+  -moz-transition: $prop $time $style;
+  -ms-transition: $prop $time $style;
+  -o-transition: $prop $time $style;
+  transition: $prop $time $style;
+}
+
+@mixin no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// generic transform
+@mixin transform($transforms) {
+  -moz-transform: $transforms;
+  -o-transform: $transforms;
+  -ms-transform: $transforms;
+  -webkit-transform: $transforms;
+  transform: $transforms;
+}
+
+// rotate
+@mixin rotate($deg) {
+  @include transform(rotate(#{$deg}deg));
+}
+
+// scale
+@mixin scale($scale) {
+  @include transform(scale($scale));
+}
+
+// translate
+@mixin translate($x, $y) {
+  @include transform(translate($x, $y));
+}
+
+// skew
+@mixin skew($x, $y) {
+  @include transform(skew(#{$x}deg, #{$y}deg));
+}
+
+// grayscale
+@mixin grayscale($value) {
+  -webkit-filter: #{"grayscale(#{$value})"};
+  -moz-filter: #{"grayscale(#{$value})"};
+  filter:#{"grayscale(#{$value})"};
+}
+
+//transform origin
+@mixin transform-origin($origin) {
+  -moz-transform-origin: $origin;
+  -o-transform-origin: $origin;
+  -ms-transform-origin: $origin;
+  -webkit-transform-origin: $origin;
+  transform-origin: $origin;
+}

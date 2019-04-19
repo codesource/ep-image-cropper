@@ -3,7 +3,9 @@
  * @copyright Copyright (c) 2019 Code-Source
  */
 
-class Downloader
+namespace CDSRC\EmpirePuzzles\Service;
+
+class ReportBuilderService
 {
     /**
      * @var string
@@ -18,7 +20,7 @@ class Downloader
     /**
      * Downloader constructor.
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct()
     {
@@ -64,7 +66,7 @@ class Downloader
     /**
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function extractReport()
     {
@@ -89,7 +91,7 @@ class Downloader
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function getPostVars($key)
     {
@@ -99,13 +101,4 @@ class Downloader
 
         return $_POST[$key];
     }
-}
-
-try {
-    $downloader = new Downloader();
-    $downloader->sendReport();
-} catch (\Exception $e) {
-    header("HTTP/1.0 404 Not Found");
-    header("X-REASON: " . $e->getMessage());
-    exit;
 }

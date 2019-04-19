@@ -21,6 +21,7 @@
   AddOutputFilterByType DEFLATE text/javascript
   AddOutputFilterByType DEFLATE text/plain
 </IfModule>
+
 <IfModule mod_gzip.c>
   mod_gzip_on Yes
   mod_gzip_dechunk Yes
@@ -47,6 +48,7 @@
   ExpiresByType image/x-icon "access 1 year"
   ExpiresDefault "access 1 month"
 </IfModule>
+
 <IfModule mod_headers.c>
   <filesmatch "\.(ico|flv|jpg|jpeg|png|gif|css|swf)$">
   Header set Cache-Control "max-age=2678400, public"
@@ -60,4 +62,28 @@
   <filesmatch "\.(js)$">
   Header set Cache-Control "max-age=2678400, private"
   </filesmatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+
+	# Enable URL rewriting
+	RewriteEngine On
+
+	# You will have to change the path in the following option if you
+	# experience problems while your installation is located in a subdirectory
+	# of the website root.
+	RewriteBase /
+
+	# Stop rewrite process if the path points to a static file anyway
+	RewriteCond %{REQUEST_FILENAME} -f [OR]
+	RewriteCond %{REQUEST_FILENAME} -l [OR]
+	RewriteCond %{REQUEST_FILENAME} -d
+	RewriteRule .* - [L]
+
+	# Redirect standard page to index
+	RewriteRule (.*)\.html(/(.*))? index.php?page=$1&action=$3
+
+	# Continue only if the file/symlink/directory does not exist
+	RewriteRule (.*) index.php
+
 </IfModule>

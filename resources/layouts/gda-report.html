@@ -1,0 +1,71 @@
+<div id="content" class="gda-report">
+    <div class="actions">
+        <div class="input">
+            <input type="text" id="date"/>
+        </div>
+        <div class="icons">
+            <form action="gda-report.html/get-report" method="post" id="download">
+                <input type="hidden" name="report" value="" id="report-value"/>
+                <input type="hidden" name="date" value="" id="date-value"/>
+                <button type="submit">
+                    <img src="/assets/img/download-white.png" class="icon" alt="download"/>
+                </button>
+            </form>
+            <img src="/assets/img/refresh-white.png" class="icon" id="refresh" alt="refresh"/>
+        </div>
+    </div>
+    <div class="content">
+        <div class="image top">
+            <label data-aspect="1.2877493757675522"
+                   data-left="0.04444444399999999"
+                   data-top="0.17156862699999997"
+                   data-width="0.911111111"
+            >
+                <div class="button">
+                    <img src="/assets/img/add-xxl.png" class="icon" alt="add"/>
+                </div>
+                <input type="file"/>
+            </label>
+            <div class="target">
+                <div class="button">
+                    <img src="/assets/img/add-xxl.png" class="icon" alt="add"/>
+                </div>
+            </div>
+        </div>
+        <div class="image bottom">
+            <label data-aspect="0.3994184552396363"
+                   data-left="0.037525338033712684"
+                   data-top="0.5225930092958713"
+                   data-width="0.93031216030538"
+            >
+                <div class="button">
+                    <img src="/assets/img/add-xxl.png" class="icon" alt="add"/>
+                </div>
+                <input type="file"/>
+            </label>
+            <div class="target">
+                <div class="button">
+                    <img src="/assets/img/add-xxl.png" class="icon" alt="add"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cropper">
+        <div class="actions">
+            <div class="icons">
+                <img src="/assets/img/checkmark-xxl.png" class="icon" id="import" alt="import"/>
+                <img src="/assets/img/close-window-xxl.png" class="icon" id="cancel" alt="cancel"/>
+            </div>
+        </div>
+        <div class="image">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgDTD2qgAAAAASUVORK5CYII="
+                 alt=""
+                 class="croppable"
+            />
+        </div>
+    </div>
+</div>
+
+<template ref="javascripts">
+    <script src="/assets/js/report.js"></script>
+</template>
