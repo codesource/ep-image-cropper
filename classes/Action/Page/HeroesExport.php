@@ -11,12 +11,29 @@ use CDSRC\EmpirePuzzles\Service\HeroParser;
 class HeroesExport extends AbstractActionResolver
 {
 
+    /**
+     * @var string
+     */
     protected $temporaryDirectory;
 
+    /**
+     * @var string
+     */
+    protected $font;
 
+    /**
+     * @var int
+     */
+    protected $gab = 5;
+
+
+    /**
+     * HeroesExport constructor.
+     */
     public function __construct()
     {
         $this->temporaryDirectory = rtrim(realpath(rtrim(__DIR__, '/') . '/../../../public/temp/'), '/') . '/';
+        $this->font = rtrim(realpath(rtrim(__DIR__, '/') . '/../../../resources/fonts/'), '/') . '/verdanab.ttf';
     }
 
     /**
@@ -44,17 +61,7 @@ class HeroesExport extends AbstractActionResolver
                         $images = $this->extractImagesAndPosition($heroes, $imageWidth, $imageHeight);
                         if ($images && $imageWidth && $imageHeight) {
                             $fileName = $baseName . '-' . $color . '.jpg';
-                            $fullPath = $this->temporaryDirectory . $fileName;
-                            $background = imagecreatetruecolor($imageWidth, $imageHeight);
-                            $allocatedColor = imagecolorallocate($background, 0, 0, 0);
-                            imagefill($background, 0, 0, $allocatedColor);
-                            foreach ($images as $image) {
-                                imagecopymerge($background, $image[0], $image[1], $image[2], 0, 0, $image[3], $image[4], 100);
-                                imagedestroy($image[0]);
-                            }
-                            imagejpeg($background, $fullPath);
-                            imagedestroy($background);
-                            if (file_exists($fullPath)) {
+                            if ($this->generateHeroesImage($images, $imageWidth, $imageHeight, $fileName)) {
                                 $files[] = [
                                     'file' => $fileName,
                                     'size' => count($images),
@@ -95,17 +102,87 @@ class HeroesExport extends AbstractActionResolver
         return [];
     }
 
-    protected function extractImagesAndPosition(array $heroes, &$finalWidth, &$finalHeight)
+    /**
+     * @param array $images
+     * @param int $imageWidth
+     * @param int $imageHeight
+     * @param string $fileName
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    protected function generateHeroesImage(array $images, int $imageWidth, int $imageHeight, string $fileName)
+    {
+        list($date, $dateWidth, $dateHeight) = $this->getDateForImage($imageWidth);
+        $fullPath = $this->temporaryDirectory . $fileName;
+        $dateHeight += ($this->gab * 2);
+        $dateExtendedWidth = $dateWidth + ($this->gab * 2);
+        $finalWidth = max($imageWidth, $dateExtendedWidth);
+        $background = imagecreatetruecolor($finalWidth, $imageHeight + $dateHeight);
+
+        // Fill with black color
+        $black = imagecolorallocate($background, 0, 0, 0);
+        imagefill($background, 0, 0, $black);
+
+        // Add date to header
+        $white = imagecolorallocate($background, 255, 255, 255);
+        $textX = ($finalWidth / 2) - ($dateWidth / 2);
+        $textY = (($dateHeight + $this->gab) / 2) + $this->gab;
+        imagettftext($background, 12, 0, $textX, $textY, $white, $this->font, $date);
+
+
+        // Merge all heroes image
+        $imageGab = $imageWidth > $dateExtendedWidth ? 0 : ($dateExtendedWidth - $imageWidth) / 2;
+        foreach ($images as $image) {
+            imagecopymerge($background, $image[0], $image[1] + $imageGab, $image[2] + $dateHeight, 0, 0, $image[3], $image[4], 100);
+            imagedestroy($image[0]);
+        }
+
+        imagejpeg($background, $fullPath);
+        imagedestroy($background);
+
+        return file_exists($fullPath);
+    }
+
+    /**
+     * @param $imageWidth
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected function getDateForImage($imageWidth)
+    {
+        $date = (new \DateTime())->format('d.m.Y H:i');
+        $textBox = imagettfbbox(12, 0, $this->font, $date);
+        $textWidth = abs($textBox[2] - $textBox[0]);
+        $textHeight = abs($textBox[7] - $textBox[1]);
+
+        return [
+            $date,
+            $textWidth,
+            $textHeight
+        ];
+    }
+
+    /**
+     * @param array $heroes
+     * @param int $finalWidth
+     * @param int $finalHeight
+     *
+     * @return array
+     */
+    protected function extractImagesAndPosition(array $heroes, int &$finalWidth, int &$finalHeight)
     {
         $images = [];
         $col = 0;
-        $gab = 5;
-        $currentY = $gab;
+        $currentY = $this->gab;
         $rowHeight = 0;
-        $rowWidth = $gab;
+        $rowWidth = $this->gab;
         foreach ($heroes as $hero) {
             if ($rowHeight < $hero[2]) {
-                $rowHeight = $hero[2] + $gab;
+                $rowHeight = $hero[2] + $this->gab;
             }
             $images[] = [
                 $hero[0],
@@ -114,7 +191,7 @@ class HeroesExport extends AbstractActionResolver
                 $hero[1],
                 $hero[2],
             ];
-            $rowWidth += $hero[1] + $gab;
+            $rowWidth += $hero[1] + $this->gab;
 
             $col++;
             if ($col >= 5) {
@@ -125,11 +202,11 @@ class HeroesExport extends AbstractActionResolver
                     $finalWidth = $rowWidth;
                 }
                 $rowHeight = 0;
-                $rowWidth = $gab;
+                $rowWidth = $this->gab;
             }
         }
         if ($col < 5) {
-            $finalHeight += $rowHeight + $gab;
+            $finalHeight += $rowHeight + $this->gab;
             if ($finalWidth < $rowWidth) {
                 $finalWidth = $rowWidth;
             }
@@ -138,6 +215,9 @@ class HeroesExport extends AbstractActionResolver
         return $images;
     }
 
+    /**
+     * @return string
+     */
     protected function getFileName()
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
