@@ -25,7 +25,7 @@ class HeroParser
         if ($resource) {
             $heroesByColor = $this->getHeroes($resource);
             foreach ($heroesByColor as $color => $heroes) {
-                if(!isset($existingHeroes[$color])){
+                if (!isset($existingHeroes[$color])) {
                     $existingHeroes[$color] = [];
                 }
                 foreach ($heroes as $hero) {
@@ -126,7 +126,7 @@ class HeroParser
             $topRight = [];
             $bottomRight = [];
             for ($x = $startX; $x < $width; $x++) {
-                if ($this->isColorMatching($resource, $x, $y, $reference)) {
+                if ($this->isColorMatching($resource, $x, $y, $reference, true)) {
                     if ($topLeft) {
                         $topRight = [$x, $y];
                     } else {
@@ -174,9 +174,11 @@ class HeroParser
      * @param int $x
      * @param int $y
      * @param array $reference
+     * @param bool $restricted
+     *
      * @return bool
      */
-    protected function isColorMatching($resource, $x, $y, array $reference)
+    protected function isColorMatching($resource, $x, $y, array $reference, $restricted = false)
     {
         $rgb = imagecolorat($resource, $x, $y);
 
@@ -185,15 +187,15 @@ class HeroParser
         $blue = $rgb & 0xFF;
 
         $redMean = ($red + $reference[0]) / 2;
-        $diffRed = pow($red - $reference[0], 2);
-        $diffGreen = pow($green - $reference[1], 2);
-        $diffBlue = pow($blue - $reference[2], 2);
+        $diffRed = abs($red - $reference[0]);
+        $diffGreen = abs($green - $reference[1]);
+        $diffBlue = abs($blue - $reference[2]);
         $distance = sqrt(
-            (((512 + $redMean) * $diffRed) >> 8) +
-            (4 * $diffGreen) +
-            (((767 - $redMean) * $diffBlue) >> 8)
+            (((512 + $redMean) * pow($diffRed, 2)) >> 8) +
+            (4 * pow($diffGreen, 2)) +
+            (((767 - $redMean) * pow($diffBlue, 2)) >> 8)
         );
 
-        return $distance < $reference[3];
+        return $distance < $reference[3] && (!$restricted || ($diffRed < 100 && $diffGreen < 100 && $diffBlue < 100));
     }
 }
