@@ -53,6 +53,9 @@
   <filesmatch "\.(ico|flv|jpg|jpeg|png|gif|css|swf)$">
   Header set Cache-Control "max-age=2678400, public"
   </filesmatch>
+  <filesmatch "\.(css)$">
+  Header set Cache-Control "max-age=7200, private, must-revalidate"
+  </filesmatch>
   <filesmatch "\.(html|htm)$">
   Header set Cache-Control "max-age=7200, private, must-revalidate"
   </filesmatch>
