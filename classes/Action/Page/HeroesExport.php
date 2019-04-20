@@ -23,6 +23,8 @@ class HeroesExport extends AbstractActionResolver
      * @param string $action
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function resolve($action)
     {
@@ -117,7 +119,7 @@ class HeroesExport extends AbstractActionResolver
             $col++;
             if ($col >= 5) {
                 $col = 0;
-                $currentY = $rowHeight;
+                $currentY += $rowHeight;
                 $finalHeight += $rowHeight;
                 if ($finalWidth < $rowWidth) {
                     $finalWidth = $rowWidth;
