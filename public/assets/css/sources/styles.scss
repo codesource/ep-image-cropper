@@ -170,32 +170,30 @@ html {
 
         &.gda-report,
         &.titan-report {
+          height: 100%;
           position: relative;
 
 
           > .content {
+            @include flexbox;
+            @include align-content(flex-start);
+            @include align-items(flex-start);
+            @include flex-direction(column);
             .image {
+              @include flex;
+              @include flexbox;
+              @include align-content(stretch);
+              @include align-items(stretch);
               border: 5px solid #000000;
-              align-content: stretch;
-              align-items: stretch;
-              display: -webkit-box;
-              display: -moz-box;
-              display: -ms-flexbox;
-              display: -webkit-flex;
-              display: flex;
-              overflow: hidden;
               position: relative;
               width: 300px;
 
               .button {
-                align-items: center;
+                @include flexbox;
+                @include align-content(center);
+                @include align-items(center);
                 color: #ffffff;
                 cursor: pointer;
-                display: -webkit-box;
-                display: -moz-box;
-                display: -ms-flexbox;
-                display: -webkit-flex;
-                display: flex;
                 font-size: 3em;
                 height: 100%;
                 justify-content: center;
