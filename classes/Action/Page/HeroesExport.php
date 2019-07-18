@@ -49,9 +49,16 @@ class HeroesExport extends AbstractActionResolver
             case 'export':
                 if (isset($_FILES['heroes']) && isset($_FILES['heroes']['tmp_name']) && is_array($_FILES['heroes']['tmp_name'])) {
                     $parser = new HeroParser();
+                    $sorting = [];
                     $heroesByColor = [];
-                    foreach ($_FILES['heroes']['tmp_name'] as $index => $file) {
-                        $heroesByColor = $parser->parse($file, strtolower(pathinfo($_FILES['heroes']['name'][$index], PATHINFO_EXTENSION)), $heroesByColor);
+                    if(isset($_POST['sorting']) && is_array($_POST['sorting'])){
+                        $sorting = $_POST['sorting'];
+                    }
+                    foreach($sorting as $name){
+                        $index = array_search($name, $_FILES['heroes']['name']);
+                        if($index !== false){
+                            $heroesByColor = $parser->parse($_FILES['heroes']['tmp_name'][$index], strtolower(pathinfo($_FILES['heroes']['name'][$index], PATHINFO_EXTENSION)), $heroesByColor);
+                        }
                     }
                     $files = [];
                     $baseName = $this->getFileName();

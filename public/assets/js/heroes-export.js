@@ -12,44 +12,59 @@
                 heroes = $('#heroes'),
                 refresh = form.find('#refresh'),
                 updateCounter = function () {
-                    counter.html(files.find('input[type="file"]').length);
+                    counter.html(files.find('li').length);
                 };
 
             initializeInput = function (input) {
                 input.on('change', function () {
-                    let startIndex, filename, newInput, file,
-                        fullPath = input.val();
-                    if (fullPath) {
-
+                    let startIndex, filename, newInput, file, closer,
+                        inputFiles = input.get(0).files,
+                        fullPath = input.val(),
+                        appendFile = function (filename) {
+                            file = $('<li>' + filename + '</li>');
+                            closer = $('<i class="close"></i>').appendTo(file);
+                            closer.on('click', function () {
+                                $(this).parent().remove();
+                                updateCounter();
+                                if(files.find('li').length === 0){
+                                    submit.hide();
+                                    refresh.hide();
+                                }
+                            });
+                            file.append('<input type="hidden" name="sorting[]" value="' + filename + '" />');
+                            files.append(file);
+                            return file;
+                        };
+                    if (inputFiles || fullPath) {
                         // Replace input with a new one
-                        newInput = $('<input type="file" name="heroes[]" />')
+                        newInput = $('<input type="file" name="heroes[]" multiple="multiple"/>')
                         initializeInput(newInput);
                         input.replaceWith(newInput);
                         input.off('change');
-
-                        // Build file line
-                        startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-                        filename = fullPath.substring(startIndex);
-                        if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-                            filename = filename.substring(1);
+                        if (inputFiles) {
+                            $.each(inputFiles, function () {
+                                appendFile(this.name);
+                            });
+                        } else {
+                            // Build file line
+                            startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                            filename = fullPath.substring(startIndex);
+                            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                                filename = filename.substring(1);
+                            }
+                            appendFile(filename);
                         }
-                        file = $('<li>' + filename + '</li>');
-                        file.on('click', function () {
-                            file.remove();
-                            updateCounter();
-                        });
-                        file.append(input);
-                        files.append(file)
 
                         submit.show();
                         refresh.show();
                         heroes.html('');
+                        form.append(input.hide());
                         updateCounter();
                     }
-
                 });
             };
             initializeInput(form.find('input[type="file"]'));
+            files.sortable();
 
             refresh.on('click', function () {
                 files.html('');
