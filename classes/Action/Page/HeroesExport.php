@@ -24,7 +24,7 @@ class HeroesExport extends AbstractActionResolver
     /**
      * @var int
      */
-    protected $gab = 5;
+    protected $gab = 10;
 
 
     /**
@@ -47,24 +47,25 @@ class HeroesExport extends AbstractActionResolver
     {
         switch ($action) {
             case 'export':
+                $files = [];
                 if (isset($_FILES['heroes']) && isset($_FILES['heroes']['tmp_name']) && is_array($_FILES['heroes']['tmp_name'])) {
                     $parser = new HeroParser();
                     $sorting = [];
                     $heroesByColor = [];
-                    if(isset($_POST['sorting']) && is_array($_POST['sorting'])){
+                    if (isset($_POST['sorting']) && is_array($_POST['sorting'])) {
                         $sorting = $_POST['sorting'];
                     }
-                    foreach($sorting as $name){
+                    foreach ($sorting as $name) {
                         $index = array_search($name, $_FILES['heroes']['name']);
-                        if($index !== false){
+                        if ($index !== false) {
                             $heroesByColor = $parser->parse($_FILES['heroes']['tmp_name'][$index], strtolower(pathinfo($_FILES['heroes']['name'][$index], PATHINFO_EXTENSION)), $heroesByColor);
                         }
                     }
-                    $files = [];
                     $baseName = $this->getFileName();
                     foreach ($heroesByColor as $color => $heroes) {
                         $imageWidth = 0;
                         $imageHeight = 0;
+                        krsort($heroes);
                         $images = $this->extractImagesAndPosition($heroes, $imageWidth, $imageHeight);
                         if ($images && $imageWidth && $imageHeight) {
                             $fileName = $baseName . '-' . $color . '.jpg';
@@ -187,7 +188,21 @@ class HeroesExport extends AbstractActionResolver
         $currentY = $this->gab;
         $rowHeight = 0;
         $rowWidth = $this->gab;
-        foreach ($heroes as $hero) {
+        $currentStar = null;
+        foreach ($heroes as $key => $hero) {
+            $star = substr($key, 0, 1);
+            if ($currentStar !== null && $star !== $currentStar) {
+                $col = 0;
+                $currentY += $rowHeight + (3 * $this->gab);
+                $finalHeight += $rowHeight + (3 * $this->gab);
+                if ($finalWidth < $rowWidth) {
+                    $finalWidth = $rowWidth;
+                }
+                $rowHeight = 0;
+                $rowWidth = $this->gab;
+            }
+            $currentStar = $star;
+
             if ($rowHeight < $hero[2]) {
                 $rowHeight = $hero[2] + $this->gab;
             }
