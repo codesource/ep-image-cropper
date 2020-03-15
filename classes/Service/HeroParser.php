@@ -44,8 +44,9 @@ class HeroParser
     }
 
 
-    public function parse($filename, $extension, array $existingHeroes)
+    public function parse($filename, $extension)
     {
+        $existingHeroes = [];
         $resource = $this->getResource($filename, $extension);
         if ($resource) {
             $heroesByColor = $this->getHeroes($resource);
@@ -87,8 +88,8 @@ class HeroParser
     {
         $colors = [
             'yellow' => [238, 221, 70, 320],
-            'red' => [255, 54, 46, 180],
-            'blue' => [91, 172, 235, 250],
+            'red' => [230, 48, 35, 180],
+            'blue' => [65, 172, 245, 200],
             'purple' => [249, 118, 248, 250],
             'green' => [35, 243, 26, 200],
         ];
@@ -99,7 +100,7 @@ class HeroParser
             while ($hero) {
                 $stars = $this->getStars($resource, $hero);
                 // Ignore low level heroes
-                if($stars < 3){
+                if ($stars < 3) {
                     $hero = $this->getHero($resource, $reference, $hero);
                     continue;
                 }
@@ -177,7 +178,10 @@ class HeroParser
                 } else if ($topRight) {
                     // Make sure that width of hero's box is in bounds
                     $heroWidth = abs($topLeft[0] - $topRight[0]);
-                    if ($heroWidth < $this->minimalWidth || $heroWidth > $width / 4) {
+                    if ($heroWidth < ($this->minimalWidth / 2)) {
+                        $topRight = [$x, $y];
+                        continue;
+                    } else if ($heroWidth < $this->minimalWidth || $heroWidth > $width / 4) {
                         $topLeft = [];
                         $topRight = [];
                     } else {

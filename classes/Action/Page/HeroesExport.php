@@ -47,43 +47,89 @@ class HeroesExport extends AbstractActionResolver
     {
         switch ($action) {
             case 'export':
-                $files = [];
-                if (isset($_FILES['heroes']) && isset($_FILES['heroes']['tmp_name']) && is_array($_FILES['heroes']['tmp_name'])) {
+//                $files = [];
+                $baseName = null;
+                if (isset($_FILES['heroes']) && isset($_FILES['heroes']['tmp_name'])) {
                     $parser = new HeroParser();
-                    $sorting = [];
-                    $heroesByColor = [];
-                    if (isset($_POST['sorting']) && is_array($_POST['sorting'])) {
-                        $sorting = $_POST['sorting'];
-                    }
-                    foreach ($sorting as $name) {
-                        $index = array_search($name, $_FILES['heroes']['name']);
-                        if ($index !== false) {
-                            $heroesByColor = $parser->parse($_FILES['heroes']['tmp_name'][$index], strtolower(pathinfo($_FILES['heroes']['name'][$index], PATHINFO_EXTENSION)), $heroesByColor);
-                        }
-                    }
+                    $heroesByColor = $parser->parse($_FILES['heroes']['tmp_name'], strtolower(pathinfo($_FILES['heroes']['name'], PATHINFO_EXTENSION)));
                     $baseName = $this->getFileName();
+                    mkdir($this->temporaryDirectory . $baseName);
                     foreach ($heroesByColor as $color => $heroes) {
-                        $imageWidth = 0;
-                        $imageHeight = 0;
-                        krsort($heroes);
-                        $images = $this->extractImagesAndPosition($heroes, $imageWidth, $imageHeight);
-                        if ($images && $imageWidth && $imageHeight) {
-                            $fileName = $baseName . '-' . $color . '.jpg';
-                            if ($this->generateHeroesImage($images, $imageWidth, $imageHeight, $fileName)) {
-                                $files[] = [
-                                    'file' => $fileName,
-                                    'size' => count($images),
-                                    'color' => $color,
-                                ];
-                            }
+                        foreach ($heroes as $key => $hero) {
+                            $fileName = sprintf('%s/%s-%s%s%s-%s.jpg',
+                                $baseName,
+                                $color,
+                                substr($key, 0, 1),
+                                substr($key, 1, 1),
+                                substr($key, 2, 3),
+                                $this->getFileName()
+                            );
+                            imagejpeg($hero[0], $this->temporaryDirectory . $fileName);
                         }
                     }
                 }
-
-                return [
-                    'heroes' => $files,
-                    'class' => 'exported',
-                ];
+                header('Content-Type: application/json');
+                echo json_encode(['key' => $baseName]);
+                exit;
+            case 'finalize':
+                $keys = isset($_POST['keys']) ? $_POST['keys'] : null;
+                if (!$keys || !is_array($keys)) {
+                    header('HTTP/1.1 400 Bad Request');
+                    exit;
+                }
+                $heroesByColor = [];
+                $index = 0;
+                foreach ($keys as $key) {
+                    if (!$key) {
+                        header('HTTP/1.1 400 Bad Request');
+                        exit;
+                    }
+                    $dir = $this->temporaryDirectory . $key;
+                    if (!is_dir($dir)) {
+                        header('HTTP/1.1 400 Bad Request');
+                        exit;
+                    }
+                    foreach (glob($dir . '/*.jpg') as $file) {
+                        $image = imagecreatefromjpeg($file);
+                        if (preg_match('/(blue|yellow|purple|green|red)-([0-9]{5})-.*.jpg/', $file, $match) && $image) {
+                            if (!isset($heroesByColor[$match[1]])) {
+                                $heroesByColor[$match[1]] = [];
+                            }
+                            $heroesByColor[$match[1]][$match[2] . str_pad($index, 5, '0', STR_PAD_LEFT)] = [
+                                $image,
+                                imagesx($image),
+                                imagesy($image),
+                            ];
+                            $index++;
+                        } else {
+                            header('HTTP/1.1 400 Bad Request');
+                            exit;
+                        }
+                        unlink($file);
+                    }
+                    rmdir($dir);
+                }
+                $files = [];
+                $baseName = $this->getFileName();
+                foreach ($heroesByColor as $color => $heroes) {
+                    $imageWidth = 0;
+                    $imageHeight = 0;
+                    krsort($heroes);
+                    $images = $this->extractImagesAndPosition($heroes, $imageWidth, $imageHeight);
+                    if ($images && $imageWidth && $imageHeight) {
+                        $fileName = $baseName . '-' . $color . '.jpg';
+                        if ($this->generateHeroesImage($images, $imageWidth, $imageHeight, $fileName)) {
+                            $files[] = [
+                                'file' => $fileName,
+                                'color' => $color,
+                            ];
+                        }
+                    }
+                }
+                header('Content-Type: application/json');
+                echo json_encode(['files' => $files]);
+                exit;
+                break;
             case 'download':
                 if (isset($_POST['key']) && $_POST['key'] && isset($_POST['color']) && $_POST['color']) {
                     $file = $this->temporaryDirectory . $_POST['key'];
@@ -212,6 +258,9 @@ class HeroesExport extends AbstractActionResolver
                 $currentY,
                 $hero[1],
                 $hero[2],
+                $star,
+                substr($key, 1, 1),
+                substr($key, 2, 3),
             ];
             $rowWidth += $hero[1] + $this->gab;
 
@@ -240,16 +289,15 @@ class HeroesExport extends AbstractActionResolver
     /**
      * @return string
      */
-    protected function getFileName()
+    protected function getFileName($length = 16)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
         $charactersLength = strlen($characters);
         $randomString = '';
-        $length = 32;
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
 
-        return $randomString;
+        return time() . '-' . $randomString;
     }
 }

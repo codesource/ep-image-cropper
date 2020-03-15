@@ -1,17 +1,22 @@
 <div id="content" class="heroes-export {class}">
     <div class="actions">
         <div class="icons">
-            <form action="/heroes-export.html/export" method="post" id="export" enctype="multipart/form-data">
+            <div id="export">
+                <button type="submit" data-url="/heroes-export.html/export">
+                    Envoyer
+                    <img src="/assets/img/download-white.png" class="icon" alt="download"/>
+                </button>
                 <label>
                     <span>Sélectionner les fichiers</span>
                     <span class="counter">0</span>
                     <input type="file" name="heroes[]" multiple="multiple"/>
                 </label>
                 <ul class="files"></ul>
-                <button type="submit">
+                <button type="submit" data-url="/heroes-export.html/export">
+                    Envoyer
                     <img src="/assets/img/download-white.png" class="icon" alt="download"/>
                 </button>
-            </form>
+            </div>
             <img src="/assets/img/refresh-white.png" class="icon" id="refresh" alt="refresh"/>
         </div>
     </div>
@@ -20,7 +25,7 @@
         <ul>
             <li>Vous devez prendre des captures d'écran de tous les héros que vous voulez exporter.</li>
             <li>Veillez à ce que vos héros apparaissent en entier, les héros partiellement affichés seront ignorés.</li>
-            <li>Les héros seront triés par couleur et dans l'ordre des fichiers.</li>
+            <li>Les héros seront triés par couleur, étoiles et niveau.</li>
             <li>Vous pouvez sélectionner plusieurs fichiers.</li>
             <li>Vous cliquer sur un fichier sélectionné pour le supprimé.</li>
             <li>Une fois exporté, cliquez sur les images pour les télécharger.</li>
@@ -34,18 +39,9 @@
         </div>
     </div>
     <div id="heroes">
-        <template id="heroes">
-            <form action="/heroes-export.html/download" method="post" data-size="{size}">
-                <input type="hidden" name="key" value="{file}"/>
-                <input type="hidden" name="color" value="{color}"/>
-                <button type="submit">
-                    <img src="/temp/{file}" alt=""/>
-                </button>
-            </form>
-        </template>
     </div>
 </div>
 
 <template ref="javascripts">
-    <script src="/assets/js/heroes-export.js?version=1.0.0"></script>
+    <script src="/assets/js/heroes-export.js?version=1.0.1"></script>
 </template>

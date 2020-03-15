@@ -453,6 +453,24 @@ html {
                     width: 30px;
                     z-index: 1;
                   }
+                  > span{
+                    background: transparentize($color-1, 0.7);
+                    height: 100%;
+                    left: 0;
+                    position: absolute;
+                    text-align: left;
+                    top: 0;
+                    width: 0;
+                  }
+
+                  &.loading{
+                    > i{
+                      display: none;
+                    }
+                    > span{
+                      padding: 10px;
+                    }
+                  }
                 }
 
                 input {
@@ -461,10 +479,14 @@ html {
               }
 
               > button {
-                background: transparent;
+                background: $color-1;
                 border: none;
+                border-radius: 5px;
+                color: #ffffff;
                 cursor: pointer;
                 display: none;
+                margin: 5px auto;
+                padding: 5px 15px;
                 position: relative;
               }
             }
