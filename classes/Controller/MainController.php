@@ -53,6 +53,7 @@ class MainController
             'titan-report' => 'Rapport sur les titans',
             'gda-report' => 'Rapport sur les GDA',
             'heroes-export' => 'Exportation des héros',
+            'guild-message' => 'Message d\'alliance',
         ];
     }
 }

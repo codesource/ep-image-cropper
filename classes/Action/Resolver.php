@@ -45,6 +45,9 @@ class Resolver
             case 'heroes-export':
                 $actionResolver = new HeroesExport();
                 break;
+            case 'guild-message':
+                $actionResolver = new GuildMessage();
+                break;
         }
 
         return $actionResolver ? $actionResolver->resolve($this->action) : [];
