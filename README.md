@@ -1,2 +1,3 @@
-# Empire &amp; Puzzles report
-Tool to merge titan and war images and build a report.
+# Empire &amp; Puzzles tools
+* Merge titan and war images and build a report.
+* Export heroes
